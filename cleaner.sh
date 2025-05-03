@@ -142,10 +142,10 @@ find "$TARGET" -type f -size 0 -print0 2>/dev/null | while IFS= read -r -d '' fi
     dir=$(dirname "$file")
     echo -ne "\r\033[K🔄 Processing: ${dir#$TARGET/}"
     if [ "$DRY_RUN" = true ]; then
-        echo "$file" | tee -a "$LOG_FILE"
+        echo "🔍 Would delete: $file" | tee -a "$LOG_FILE"
     else
         if [ -f "$file" ]; then  # Check if file still exists
-            rm "$file" && echo "$file" | tee -a "$LOG_FILE"
+            rm "$file" && echo "🗑️  Deleted: $file" | tee -a "$LOG_FILE"
         fi
     fi
 done
@@ -180,10 +180,10 @@ find "$TARGET" \
         dir=$(dirname "$file")
         echo -ne "\r\033[K🔄 Processing: ${dir#$TARGET/}"
         if [ "$DRY_RUN" = true ]; then
-            echo "$file" | tee -a "$LOG_FILE"
+            echo "🔍 Would delete: $file" | tee -a "$LOG_FILE"
         else
             if [ -f "$file" ]; then
-                rm "$file" && echo "$file" | tee -a "$LOG_FILE"
+                rm "$file" && echo "🗑️  Deleted: $file" | tee -a "$LOG_FILE"
             fi
         fi
     done
@@ -200,7 +200,7 @@ find "$TARGET" -type d | while read -r dir; do
         else
             find "$dir" -maxdepth 1 -iname "*.xml" -mtime +"$MIN_AGE" -print0 2>/dev/null | while IFS= read -r -d '' file; do
                 if [ -f "$file" ]; then
-                    rm "$file" && echo "$file" | tee -a "$LOG_FILE"
+                    rm "$file" && echo "🗑️  Deleted: $file" | tee -a "$LOG_FILE"
                 fi
             done
         fi
@@ -215,11 +215,11 @@ find "$TARGET" -type d | while read -r dir; do
     if [ -d "$dir" ]; then  # Verify directory still exists
         if [ "$DRY_RUN" = true ]; then
             if [ -z "$(ls -A "$dir")" ]; then
-                echo "$dir" | tee -a "$LOG_FILE"
+                echo "🔍 Would delete directory: $dir" | tee -a "$LOG_FILE"
             fi
         else
             if [ -z "$(ls -A "$dir")" ]; then
-                rmdir "$dir" && echo "$dir" | tee -a "$LOG_FILE"
+                rmdir "$dir" && echo "🗑️  Deleted directory: $dir" | tee -a "$LOG_FILE"
             fi
         fi
     fi
